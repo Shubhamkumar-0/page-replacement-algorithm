@@ -54,3 +54,145 @@
           <div id="resultArea" class="mt-8"></div>
         </div>
       </main>
+       <!-- Footer -->
+  <footer class="bg-gray-900 text-white py-2 text-center shadow-md sticky bottom-0 z-50">
+    &copy; 2025 WhyCodeMrBean | All rights reserved.
+  </footer>
+
+  <!-- JavaScript Logic -->
+  <script>
+    function runAlgorithm() {
+      const referenceInput = document.getElementById('referenceInput').value.trim();
+      const frameCount = parseInt(document.getElementById('frameInput').value);
+      const algorithm = document.getElementById('algoSelect').value;
+      const resultArea = document.getElementById('resultArea');
+
+      if (!referenceInput || isNaN(frameCount) || frameCount < 1) {
+        alert("Please enter valid input!");
+        return;
+      }
+
+      const referenceString = referenceInput.split(/\s+/).map(Number);
+      const history = [];
+      let faults = 0, hits = 0;
+
+      if (algorithm === 'FIFO') {
+        const frames = [];
+        let pointer = 0;
+
+        referenceString.forEach((page, i) => {
+          let status = '';
+          if (frames.includes(page)) {
+            hits++;
+            status = 'Hit';
+          } else {
+            faults++;
+            if (frames.length < frameCount) {
+              frames.push(page);
+            } else {
+              frames[pointer] = page;
+              pointer = (pointer + 1) % frameCount;
+            }
+            status = 'Fault';
+          }
+
+          history.push({ step: i + 1, page, frames: [...frames], status });
+        });
+      }
+
+      else if (algorithm === 'LRU') {
+        const frames = [];
+        const recentMap = new Map();
+
+        referenceString.forEach((page, i) => {
+          let status = '';
+          if (frames.includes(page)) {
+            hits++;
+            status = 'Hit';
+            recentMap.set(page, i);
+          } else {
+            faults++;
+            if (frames.length < frameCount) {
+              frames.push(page);
+            } else {
+              // Find least recently used
+              let lru = frames[0];
+              for (const f of frames) {
+                if (recentMap.get(f) < recentMap.get(lru)) {
+                  lru = f;
+                }
+              }
+              const index = frames.indexOf(lru);
+              frames[index] = page;
+            }
+            status = 'Fault';
+            recentMap.set(page, i);
+          }
+
+          history.push({ step: i + 1, page, frames: [...frames], status });
+        });
+      }
+
+      else if (algorithm === 'Optimal') {
+        const frames = [];
+
+        referenceString.forEach((page, i) => {
+          let status = '';
+          if (frames.includes(page)) {
+            hits++;
+            status = 'Hit';
+          } else {
+            faults++;
+            if (frames.length < frameCount) {
+              frames.push(page);
+            } else {
+              let futureUse = frames.map(f => {
+                const idx = referenceString.slice(i + 1).indexOf(f);
+                return idx === -1 ? Infinity : idx;
+              });
+              const maxIndex = futureUse.indexOf(Math.max(...futureUse));
+              frames[maxIndex] = page;
+            }
+            status = 'Fault';
+          }
+
+          history.push({ step: i + 1, page, frames: [...frames], status });
+        });
+      }
+
+      // Render output
+      let html = `
+        <div class="text-lg font-semibold text-gray-800 mb-4">
+          Algorithm: ${algorithm} | Total Hits: ${hits} | Page Faults: ${faults} | Hit Ratio: ${(hits / referenceString.length * 100).toFixed(2)}%
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full table-auto border border-gray-300">
+            <thead>
+              <tr class="bg-blue-100">
+                <th class="px-4 py-2">Step</th>
+                <th class="px-4 py-2">Page</th>
+                <th class="px-4 py-2">Frame Content</th>
+                <th class="px-4 py-2">Status</th>
+              </tr>
+            </thead>
+            <tbody>
+      `;
+
+      history.forEach(row => {
+        html += `
+          <tr class="text-center border-t">
+            <td class="py-2">${row.step}</td>
+            <td class="py-2">${row.page}</td>
+            <td class="py-2">${row.frames.join(', ')}</td>
+            <td class="py-2 ${row.status === 'Fault' ? 'text-red-600' : 'text-green-600'} font-semibold">${row.status}</td>
+          </tr>
+        `;
+      });
+
+      html += "</tbody></table></div>";
+      resultArea.innerHTML = html;
+    }
+  </script>
+
+</body>
+</html>
