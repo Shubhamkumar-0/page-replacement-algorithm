@@ -1,11 +1,47 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Page Replacement Concepts</title>
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-    
-</body>
-</html>
+<body class="bg-gray-100 font-sans min-h-screen flex flex-col">
+
+  <!-- Navbar -->
+  <header class="bg-white shadow-md sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-6 py-2 flex justify-between items-center">
+      <h1 class="text-xl font-bold text-600">Page Replacement Concepts</h1>
+      <nav class="space-x-4">
+        <a href="simulator.html" class="text-gray-600 hover:text-blue-500">Simulator</a>
+        <a href="index.html" class="text-blue-600 font-semibold">Info</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Content -->
+  <main class="">
+    <div class="p-10">
+      <h2 class="text-2xl font-semibold text-blue-700 mb-4 text-center">Page Replacement Algorithms</h2>
+  
+      <!-- Introduction -->
+      <section class="mb-8">
+        <h3 class="text-xl font-semibold text-gray-800 mb-2">Introduction</h3>
+        <p class="text-gray-700">
+          In computer systems that use virtual memory, programs do not directly access the physical memory (RAM) but rather use virtual addresses. The operating system translates these virtual addresses into physical addresses using a page table. When a program tries to access a page that is not in the main memory, a <strong>page fault</strong> occurs. The OS must then load the required page into a <strong>free frame</strong> in memory. If no free frame is available, the OS uses a <strong>page replacement algorithm</strong> to decide which page to evict.
+        </p>
+      </section>
+  
+      <!-- Key Concepts -->
+      <section class="mb-8">
+        <h3 class="text-xl font-semibold text-gray-800 mb-2">Key Terminologies</h3>
+        <ul class="list-disc list-inside text-gray-700">
+          <li><strong>Page:</strong> A fixed-length block of virtual memory.</li>
+          <li><strong>Frame:</strong> A fixed-length block of physical memory (RAM).</li>
+          <li><strong>Page Fault:</strong> When a program requests a page that is not currently in main memory.</li>
+          <li><strong>Reference String:</strong> The sequence of memory pages referenced by a program.</li>
+          <li><strong>Page Hit:</strong> When the requested page is already in memory.</li>
+          <li><strong>Page Miss:</strong> When the requested page causes a page fault.</li>
+          <li><strong>Thrashing:</strong> A condition where excessive page faults occur, reducing performance severely.</li>
+        </ul>
+      </section>
