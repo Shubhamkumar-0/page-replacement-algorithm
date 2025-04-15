@@ -18,3 +18,39 @@
       </nav>
     </div>
   </header>
+    <!-- Main -->
+    <main class="flex-1 container mx-auto p-6">
+        <div class="bg-white rounded-xl shadow p-6 max-w-3xl mx-auto">
+          <h2 class="text-2xl font-semibold mb-4 text-center text-blue-700">Page Replacement Algorithm</h2>
+          
+          <!-- Inputs -->
+          <div class="space-y-4">
+            <div>
+              <label class="block font-medium">Reference String (space-separated):</label>
+              <input id="referenceInput" type="text" placeholder="e.g. 7 0 1 2 0 3 0 4"
+                class="w-full mt-1 border rounded p-2 focus:outline-none focus:ring-2 focus:ring-blue-300">
+            </div>
+    
+            <div>
+              <label class="block font-medium">Number of Frames:</label>
+              <input id="frameInput" type="number" min="1" value="3"
+                class="w-full mt-1 border rounded p-2 focus:outline-none focus:ring-2 focus:ring-blue-300">
+            </div>
+    
+            <div>
+              <label class="block font-medium">Select Algorithm:</label>
+              <select id="algoSelect" class="w-full mt-1 border rounded p-2 focus:outline-none focus:ring-2 focus:ring-blue-300">
+                <option value="FIFO">FIFO</option>
+                <option value="LRU">LRU</option>
+                <option value="Optimal">Optimal</option>
+              </select>
+            </div>
+    
+            <button onclick="runAlgorithm()"
+              class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded shadow mt-4 w-full">Run Algorithm</button>
+          </div>
+    
+          <!-- Results -->
+          <div id="resultArea" class="mt-8"></div>
+        </div>
+      </main>
