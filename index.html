@@ -45,3 +45,273 @@
           <li><strong>Thrashing:</strong> A condition where excessive page faults occur, reducing performance severely.</li>
         </ul>
       </section>
+       <!-- Content -->
+  <main class="">
+    <div class="p-10">
+      <h2 class="text-2xl font-semibold text-blue-700 mb-4 text-center">Page Replacement Algorithms</h2>
+  
+      <!-- Introduction -->
+      <section class="mb-8">
+        <h3 class="text-xl font-semibold text-gray-800 mb-2">Introduction</h3>
+        <p class="text-gray-700">
+          In computer systems that use virtual memory, programs do not directly access the physical memory (RAM) but rather use virtual addresses. The operating system translates these virtual addresses into physical addresses using a page table. When a program tries to access a page that is not in the main memory, a <strong>page fault</strong> occurs. The OS must then load the required page into a <strong>free frame</strong> in memory. If no free frame is available, the OS uses a <strong>page replacement algorithm</strong> to decide which page to evict.
+        </p>
+      </section>
+  
+      <!-- Key Concepts -->
+      <section class="mb-8">
+        <h3 class="text-xl font-semibold text-gray-800 mb-2">Key Terminologies</h3>
+        <ul class="list-disc list-inside text-gray-700">
+          <li><strong>Page:</strong> A fixed-length block of virtual memory.</li>
+          <li><strong>Frame:</strong> A fixed-length block of physical memory (RAM).</li>
+          <li><strong>Page Fault:</strong> When a program requests a page that is not currently in main memory.</li>
+          <li><strong>Reference String:</strong> The sequence of memory pages referenced by a program.</li>
+          <li><strong>Page Hit:</strong> When the requested page is already in memory.</li>
+          <li><strong>Page Miss:</strong> When the requested page causes a page fault.</li>
+          <li><strong>Thrashing:</strong> A condition where excessive page faults occur, reducing performance severely.</li>
+        </ul>
+      </section>
+  
+      <section class="mb-8">
+        <h3 class="text-xl font-semibold text-gray-800 mb-2">FIFO (First-In-First-Out) Algorithm</h3>
+        <p class="text-gray-700">
+          The FIFO algorithm maintains a queue of all pages in memory in the order they were added. When a page needs to be replaced, the oldest page (the one that was loaded first) is removed from memory.
+        </p>
+        <ul class="list-inside text-gray-700">
+          <li><strong>Pros:</strong> 
+            <ul class="list-disc ml-5">
+              <li>Simple and easy to implement using a basic queue data structure.</li>
+              <li>Minimal overhead due to no need to track usage history.</li>
+            </ul>
+          </li>
+          <li><strong>Cons:</strong> 
+            <ul class="list-disc ml-5">
+              <li>May remove frequently used pages just because they are old (not usage-aware).</li>
+              <li>Can suffer from Belady’s Anomaly – increasing the number of frames can lead to more faults.</li>
+              <li>Does not adapt well to actual program behavior or access patterns.</li>
+            </ul>
+          </li>
+        </ul>
+        <p class="text-gray-600 mt-2">FIFO does not consider the frequency or recency of page usage, which can lead to suboptimal performance.</p>
+      
+        <!-- FIFO Code -->
+        <div class="bg-gray-100 mt-4 p-4 rounded shadow text-sm overflow-x-auto">
+          <h4 class="font-semibold text-gray-800 mb-2">JavaScript Implementation:</h4>
+          <pre><code class="text-gray-700">
+      // FIFO Page Replacement
+      const frames = [];
+      let pointer = 0;
+      
+      referenceString.forEach((page, i) => {
+        let status = '';
+        if (frames.includes(page)) {
+          hits++;
+          status = 'Hit';
+        } else {
+          faults++;
+          if (frames.length < frameCount) {
+            frames.push(page);
+          } else {
+            frames[pointer] = page;
+            pointer = (pointer + 1) % frameCount;
+          }
+          status = 'Fault';
+        }
+      
+        history.push({ step: i + 1, page, frames: [...frames], status });
+      });
+          </code></pre>
+        </div>
+      </section>
+      
+      <section class="mb-8">
+        <h3 class="text-xl font-semibold text-gray-800 mb-2">LRU (Least Recently Used) Algorithm</h3>
+        <p class="text-gray-700">
+          The LRU algorithm replaces the page that has not been used for the longest time. It assumes that pages used recently will be used again soon.
+        </p>
+        <ul class="list-inside text-gray-700">
+          <li><strong>Pros:</strong>
+            <ul class="list-disc ml-5">
+              <li>Generally performs better than FIFO in practical applications.</li>
+              <li>Reduces unnecessary page replacements by tracking actual usage.</li>
+              <li>Better mimics real-world process behavior and access patterns.</li>
+            </ul>
+          </li>
+          <li><strong>Cons:</strong>
+            <ul class="list-disc ml-5">
+              <li>Requires extra data structures like a map or stack to track usage history.</li>
+              <li>May introduce performance overhead due to frequent updates to recent usage data.</li>
+              <li>Implementation complexity is higher compared to FIFO.</li>
+            </ul>
+          </li>
+        </ul>
+        <p class="text-gray-600 mt-2">LRU is commonly used because it closely models real process behavior, but it requires tracking usage history.</p>
+      
+        <!-- LRU Code -->
+        <div class="bg-gray-100 mt-4 p-4 rounded shadow text-sm overflow-x-auto">
+          <h4 class="font-semibold text-gray-800 mb-2">JavaScript Implementation:</h4>
+          <pre><code class="text-gray-700">
+      // LRU Page Replacement
+      const frames = [];
+      const recentMap = new Map();
+      
+      referenceString.forEach((page, i) => {
+        let status = '';
+        if (frames.includes(page)) {
+          hits++;
+          status = 'Hit';
+          recentMap.set(page, i);
+        } else {
+          faults++;
+          if (frames.length < frameCount) {
+            frames.push(page);
+          } else {
+            let lru = frames[0];
+            for (const f of frames) {
+              if (recentMap.get(f) < recentMap.get(lru)) {
+                lru = f;
+              }
+            }
+            const index = frames.indexOf(lru);
+            frames[index] = page;
+          }
+          status = 'Fault';
+          recentMap.set(page, i);
+        }
+      
+        history.push({ step: i + 1, page, frames: [...frames], status });
+      });
+          </code></pre>
+        </div>
+      </section>
+      
+      <section class="mb-8">
+        <h3 class="text-xl font-semibold text-gray-800 mb-2">Optimal Page Replacement Algorithm</h3>
+        <p class="text-gray-700">
+          The Optimal algorithm replaces the page that will not be used for the longest time in the future. It gives the least number of page faults, but it requires future knowledge.
+        </p>
+        <ul class=" list-inside text-gray-700">
+          <li><strong>Pros:</strong>
+            <ul class="list-disc ml-5">
+              <li>Produces the minimum possible number of page faults.</li>
+              <li>Used as a theoretical benchmark for comparing other algorithms.</li>
+              <li>Helps evaluate and design better approximation algorithms.</li>
+            </ul>
+          </li>
+          <li><strong>Cons:</strong>
+            <ul class="list-disc ml-5">
+              <li>Requires knowledge of future page references, which is not possible in real-time systems.</li>
+              <li>Not practical for implementation in operating systems.</li>
+              <li>Only used for simulation or analysis purposes.</li>
+            </ul>
+          </li>
+        </ul>
+        <p class="text-gray-600 mt-2">Though not feasible in real-world OS, it is used as a benchmark to compare other algorithms.</p>
+      
+        <!-- Optimal Code -->
+        <div class="bg-gray-100 mt-4 p-4 rounded shadow text-sm overflow-x-auto">
+          <h4 class="font-semibold text-gray-800 mb-2">JavaScript Implementation:</h4>
+          <pre><code class="text-gray-700">
+      // Optimal Page Replacement
+      const frames = [];
+      
+      referenceString.forEach((page, i) => {
+        let status = '';
+        if (frames.includes(page)) {
+          hits++;
+          status = 'Hit';
+        } else {
+          faults++;
+          if (frames.length < frameCount) {
+            frames.push(page);
+          } else {
+            let futureUse = frames.map(f => {
+              const idx = referenceString.slice(i + 1).indexOf(f);
+              return idx === -1 ? Infinity : idx;
+            });
+            const maxIndex = futureUse.indexOf(Math.max(...futureUse));
+            frames[maxIndex] = page;
+          }
+          status = 'Fault';
+        }
+      
+        history.push({ step: i + 1, page, frames: [...frames], status });
+      });
+          </code></pre>
+        </div>
+      </section>
+      
+      
+  
+      <!-- Additional Algorithms -->
+      <section class="mb-8">
+        <h3 class="text-xl font-semibold text-gray-800 mb-2">Other Algorithms</h3>
+        <ul class="list-disc list-inside text-gray-700">
+          <li><strong>Clock (Second-Chance):</strong> An approximation of LRU using a circular queue and a reference bit for each page.</li>
+          <li><strong>Least Frequently Used (LFU):</strong> Replaces the page with the lowest access frequency count. Requires counters for each page.</li>
+          <li><strong>Most Recently Used (MRU):</strong> Replaces the most recently used page. Useful in some scenarios like stack algorithms.</li>
+          <li><strong>Random Replacement:</strong> Selects a page at random. Easy to implement but poor in performance.</li>
+        </ul>
+      </section>
+  
+  
+      <!-- Summary Table -->
+      <section class="mb-8">
+        <h3 class="text-xl font-semibold text-gray-800 mb-2">Comparison of Algorithms</h3>
+        <table class="table-auto w-full text-left border border-gray-300 text-gray-700">
+          <thead class="bg-gray-100">
+            <tr>
+              <th class="px-4 py-2 border">Algorithm</th>
+              <th class="px-4 py-2 border">Performance</th>
+              <th class="px-4 py-2 border">Complexity</th>
+              <th class="px-4 py-2 border">Practicality</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="px-4 py-2 border">FIFO</td>
+              <td class="px-4 py-2 border">Poor</td>
+              <td class="px-4 py-2 border">Simple</td>
+              <td class="px-4 py-2 border">Yes</td>
+            </tr>
+            <tr>
+              <td class="px-4 py-2 border">LRU</td>
+              <td class="px-4 py-2 border">Good</td>
+              <td class="px-4 py-2 border">Moderate</td>
+              <td class="px-4 py-2 border">Yes</td>
+            </tr>
+            <tr>
+              <td class="px-4 py-2 border">Optimal</td>
+              <td class="px-4 py-2 border">Best</td>
+              <td class="px-4 py-2 border">High (Theoretical)</td>
+              <td class="px-4 py-2 border">No</td>
+            </tr>
+            <tr>
+              <td class="px-4 py-2 border">Clock</td>
+              <td class="px-4 py-2 border">Good</td>
+              <td class="px-4 py-2 border">Low</td>
+              <td class="px-4 py-2 border">Yes</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+  
+      <!-- Practical Note -->
+      <section class="mt-6">
+        <p class="text-sm text-gray-500 text-center">
+          Want to see these in action? Try experimenting with different algorithms on the <a href="simulator.html" class="text-blue-600 underline">simulator page</a>.
+        </p>
+      </section>
+    </div>
+  </main>
+  
+  <!-- Footer -->
+   <hr class="border-gray-300 my-8" />
+  <div class="bg-white-900 text-black py-20 text-center">
+    &copy; 2025 WhyCodeMrBean | All rights reserved.
+  </div>
+  
+  
+
+</body>
+</html>
