@@ -3,6 +3,7 @@ Page Replacement Algorithms Simulator<br>
 Overview<br>
 This project provides a comprehensive overview and interactive simulation of various page replacement algorithms used in operating systems. Page replacement algorithms are crucial for managing the contents of a system's memory and ensuring optimal performance. This simulator lets users understand how algorithms like FIFO, LRU, and Optimal work, and allows them to visualize how page replacements occur in real-time, with a user-defined reference string and number of frames.<br><br>
 
+
 The project includes detailed explanations of each algorithm, accompanied by their strengths and weaknesses, followed by a hands-on simulator where users can experiment with their own data to observe how the algorithms perform.<br><br>
 
 Features
